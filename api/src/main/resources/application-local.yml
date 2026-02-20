@@ -41,6 +41,13 @@ kafka:
         port: 9997
         type: JMX
 
+    # - name: confluent-cloud
+    #   bootstrapServers: xxx:xxxx
+    #   properties:
+    #     security.protocol: SASL_SSL
+    #     sasl.mechanism: PLAIN
+    #     sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='xxxx' password='xxxx';
+
 dynamic.config.enabled: true
 
 oauth2:

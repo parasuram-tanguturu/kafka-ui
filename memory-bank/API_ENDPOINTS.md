@@ -530,14 +530,15 @@ GET {{kafbatBaseUrl}}/metrics
 
 ---
 
-### 12. Configuration (5 endpoints)
+### 12. Configuration (6 endpoints)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/info` | Get application info |
-| GET | `/api/config` | Get application config |
-| GET | `/api/config/validated` | Get validated config |
-| GET | `/api/config/relatedfiles` | Get related config files |
+| GET | `/api/config` | Get current application config |
+| PUT | `/api/config` | Apply new config & restart app |
+| PUT | `/api/config/validated` | Validate config before applying |
+| POST | `/api/config/relatedfiles` | Upload SSL certs/config files |
 | GET | `/api/config/authentication` | Get authentication config |
 
 #### Example Requests
@@ -547,9 +548,66 @@ GET {{kafbatBaseUrl}}/metrics
 GET {{kafbatBaseUrl}}/api/info
 ```
 
-**Get Config**
+**Get Current Config**
 ```http
 GET {{kafbatBaseUrl}}/api/config
+```
+
+**Apply Config & Restart (Dynamic Cluster Add)**
+```http
+PUT {{kafbatBaseUrl}}/api/config
+Content-Type: application/json
+
+{
+  "config": {
+    "properties": {
+      "kafka": {
+        "clusters": [
+          {
+            "name": "local",
+            "bootstrapServers": "localhost:9092"
+          },
+          {
+            "name": "confluent-cloud",
+            "bootstrapServers": "pkc-xxxxx.region.gcp.confluent.cloud:9092",
+            "properties": {
+              "security.protocol": "SASL_SSL",
+              "sasl.mechanism": "PLAIN",
+              "sasl.jaas.config": "org.apache.kafka.common.security.plain.PlainLoginModule required username='API_KEY' password='API_SECRET';"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+**Validate Config**
+```http
+PUT {{kafbatBaseUrl}}/api/config/validated
+Content-Type: application/json
+
+{
+  "properties": {
+    "kafka": {
+      "clusters": [
+        {
+          "name": "test-cluster",
+          "bootstrapServers": "localhost:9092"
+        }
+      ]
+    }
+  }
+}
+```
+
+**Upload Config File (SSL cert, truststore)**
+```http
+POST {{kafbatBaseUrl}}/api/config/relatedfiles
+Content-Type: multipart/form-data
+
+[file attachment]
 ```
 
 ---

@@ -449,18 +449,6 @@
               "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "connectors"]
             }
           }
-        },
-        {
-          "name": "List Topic ACLs",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/acls",
-              "host": ["{{kafbatBaseUrl}}"],
-              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "acls"]
-            }
-          }
         }
       ]
     },
@@ -1367,7 +1355,7 @@
     },
     {
       "name": "12. Configuration",
-      "description": "Application configuration endpoints",
+      "description": "Application configuration endpoints - includes dynamic config management",
       "item": [
         {
           "name": "Get App Info",
@@ -1378,7 +1366,8 @@
               "raw": "{{kafbatBaseUrl}}/api/info",
               "host": ["{{kafbatBaseUrl}}"],
               "path": ["api", "info"]
-            }
+            },
+            "description": "Returns application version, build info, and enabled features"
           }
         },
         {
@@ -1390,31 +1379,75 @@
               "raw": "{{kafbatBaseUrl}}/api/config",
               "host": ["{{kafbatBaseUrl}}"],
               "path": ["api", "config"]
-            }
+            },
+            "description": "Returns current application configuration including all clusters"
           }
         },
         {
-          "name": "Get Validated Config",
+          "name": "Apply Config & Restart",
           "request": {
-            "method": "GET",
-            "header": [],
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"config\": {\n    \"properties\": {\n      \"kafka\": {\n        \"clusters\": [\n          {\n            \"name\": \"local\",\n            \"bootstrapServers\": \"localhost:9092\",\n            \"schemaRegistry\": \"http://localhost:8085\",\n            \"metrics\": {\n              \"type\": \"JMX\",\n              \"port\": 9997\n            }\n          },\n          {\n            \"name\": \"confluent-cloud\",\n            \"bootstrapServers\": \"pkc-xxxxx.region.gcp.confluent.cloud:9092\",\n            \"properties\": {\n              \"security.protocol\": \"SASL_SSL\",\n              \"sasl.mechanism\": \"PLAIN\",\n              \"sasl.jaas.config\": \"org.apache.kafka.common.security.plain.PlainLoginModule required username='API_KEY' password='API_SECRET';\"\n            }\n          }\n        ]\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/config",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "config"]
+            },
+            "description": "Applies new configuration and restarts the application. Use this to dynamically add/remove clusters."
+          }
+        },
+        {
+          "name": "Validate Config",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"properties\": {\n    \"kafka\": {\n      \"clusters\": [\n        {\n          \"name\": \"test-cluster\",\n          \"bootstrapServers\": \"localhost:9092\"\n        }\n      ]\n    }\n  }\n}"
+            },
             "url": {
               "raw": "{{kafbatBaseUrl}}/api/config/validated",
               "host": ["{{kafbatBaseUrl}}"],
               "path": ["api", "config", "validated"]
-            }
+            },
+            "description": "Validates configuration without applying. Returns validation errors for each cluster."
           }
         },
         {
-          "name": "Get Related Config Files",
+          "name": "Upload Config File",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
             "url": {
               "raw": "{{kafbatBaseUrl}}/api/config/relatedfiles",
               "host": ["{{kafbatBaseUrl}}"],
               "path": ["api", "config", "relatedfiles"]
-            }
+            },
+            "description": "Upload SSL certificates, truststore, or other config-related files"
           }
         },
         {
@@ -1426,7 +1459,8 @@
               "raw": "{{kafbatBaseUrl}}/api/config/authentication",
               "host": ["{{kafbatBaseUrl}}"],
               "path": ["api", "config", "authentication"]
-            }
+            },
+            "description": "Returns authentication methods enabled for the application"
           }
         }
       ]
