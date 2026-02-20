@@ -6,6 +6,10 @@ logging:
     #org.springframework.http.codec.json.Jackson2JsonDecoder: DEBUG
     reactor.netty.http.server.AccessLog: INFO
     org.springframework.security: DEBUG
+    # Suppress JMX SSL error (not needed for local dev with plain JMX)
+    io.kafbat.ui.service.metrics.sink.jmx.JmxSslSocketFactory: OFF
+    # Suppress macOS DNS resolver warning
+    io.netty.resolver.dns.DnsServerAddressStreamProviders: WARN
 
 #server:
 #  port: 8080 #- Port on which the app will run.
@@ -27,10 +31,12 @@ kafka:
     - name: local
       bootstrapServers: localhost:9092
       schemaRegistry: http://localhost:8085
-      ksqldbServer: http://localhost:8088
-      kafkaConnect:
-        - name: first
-          address: http://localhost:8083
+      # Uncomment if running ksqlDB locally
+      #ksqldbServer: http://localhost:8088
+      # Uncomment if running Kafka Connect locally
+      #kafkaConnect:
+      #  - name: first
+      #    address: http://localhost:8083
       metrics:
         port: 9997
         type: JMX
@@ -80,70 +86,22 @@ auth:
         custom-params:
           type: github
 
-rbac:
-  roles:
-    - name: "memelords"
-      clusters:
-        - local
-      subjects:
-        - provider: oauth_google
-          type: domain
-          value: "kafbat.dev"
-        - provider: oauth_google
-          type: user
-          value: "name@kafbat.dev"
-
-        - provider: oauth_github
-          type: organization
-          value: "kafbat"
-        - provider: oauth_github
-          type: user
-          value: "memelord"
-
-        - provider: oauth_cognito
-          type: user
-          value: "username"
-        - provider: oauth_cognito
-          type: group
-          value: "memelords"
-
-        - provider: ldap
-          type: group
-          value: "admin_staff"
-
-        # NOT IMPLEMENTED YET
-      #        - provider: ldap_ad
-      #          type: group
-      #          value: "admin_staff"
-
-      permissions:
-        - resource: applicationconfig
-          actions: all
-
-        - resource: clusterconfig
-          actions: all
-
-        - resource: topic
-          value: ".*"
-          actions: all
-
-        - resource: consumer
-          value: ".*"
-          actions: all
-
-        - resource: schema
-          value: ".*"
-          actions: all
-
-        - resource: connect
-          value: ".*"
-          actions: all
-
-        - resource: ksql
-          actions: all
-
-        - resource: acl
-          actions: all
-
-        - resource: audit
-          actions: all
+# RBAC disabled for local development (auth.type: DISABLED means no user identity)
+# Uncomment below when using OAuth2 or LDAP authentication
+#rbac:
+#  roles:
+#    - name: "memelords"
+#      clusters:
+#        - local
+#      subjects:
+#        - provider: oauth_google
+#          type: domain
+#          value: "kafbat.dev"
+#      permissions:
+#        - resource: applicationconfig
+#          actions: all
+#        - resource: clusterconfig
+#          actions: all
+#        - resource: topic
+#          value: ".*"
+#          actions: all

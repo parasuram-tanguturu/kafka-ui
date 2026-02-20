@@ -1,0 +1,1453 @@
+{
+  "info": {
+    "_postman_id": "kafka-ui-collection",
+    "name": "Kafka UI API",
+    "description": "Complete API collection for Kafka UI (Kafbat) - 70+ endpoints for managing Kafka clusters, topics, messages, consumer groups, schemas, connectors, and more.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "kafbatBaseUrl",
+      "value": "http://localhost:8080",
+      "type": "string",
+      "description": "Base URL for Kafka UI API"
+    },
+    {
+      "key": "clusterName",
+      "value": "local",
+      "type": "string",
+      "description": "Kafka cluster name"
+    },
+    {
+      "key": "topicName",
+      "value": "test-topic",
+      "type": "string",
+      "description": "Topic name for operations"
+    },
+    {
+      "key": "connectName",
+      "value": "connect-cluster",
+      "type": "string",
+      "description": "Kafka Connect cluster name"
+    },
+    {
+      "key": "connectorName",
+      "value": "my-connector",
+      "type": "string",
+      "description": "Connector name"
+    },
+    {
+      "key": "schemaSubject",
+      "value": "test-value",
+      "type": "string",
+      "description": "Schema Registry subject"
+    },
+    {
+      "key": "consumerId",
+      "value": "my-consumer-group",
+      "type": "string",
+      "description": "Consumer group ID"
+    },
+    {
+      "key": "brokerId",
+      "value": "1",
+      "type": "string",
+      "description": "Broker ID"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Clusters",
+      "description": "Cluster management operations",
+      "item": [
+        {
+          "name": "Get All Clusters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters"]
+            },
+            "description": "Returns list of all configured Kafka clusters"
+          }
+        },
+        {
+          "name": "Get Cluster Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/metrics",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "metrics"]
+            },
+            "description": "Get metrics for a specific cluster"
+          }
+        },
+        {
+          "name": "Get Cluster Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/stats",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "stats"]
+            },
+            "description": "Get statistics for a specific cluster"
+          }
+        },
+        {
+          "name": "Update Cluster Info (Refresh Cache)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/cache",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "cache"]
+            },
+            "description": "Refresh cluster information cache"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Brokers",
+      "description": "Broker management operations",
+      "item": [
+        {
+          "name": "List All Brokers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/brokers",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "brokers"]
+            }
+          }
+        },
+        {
+          "name": "Get Broker Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/brokers/{{brokerId}}/configs",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "brokers", "{{brokerId}}", "configs"]
+            }
+          }
+        },
+        {
+          "name": "Update Broker Config",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": \"168\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/brokers/{{brokerId}}/configs/log.retention.hours",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "brokers", "{{brokerId}}", "configs", "log.retention.hours"]
+            }
+          }
+        },
+        {
+          "name": "Get Broker Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/brokers/{{brokerId}}/metrics",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "brokers", "{{brokerId}}", "metrics"]
+            }
+          }
+        },
+        {
+          "name": "Get All Broker Log Dirs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/brokers/logdirs",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "brokers", "logdirs"]
+            }
+          }
+        },
+        {
+          "name": "Update Broker Log Dir",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"topic\": \"test-topic\",\n  \"partition\": 0,\n  \"logDir\": \"/var/kafka-logs\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/brokers/{{brokerId}}/logdirs",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "brokers", "{{brokerId}}", "logdirs"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Topics",
+      "description": "Topic CRUD and management operations",
+      "item": [
+        {
+          "name": "List Topics (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics?page=1&perPage=25&showInternal=false",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "perPage", "value": "25"},
+                {"key": "showInternal", "value": "false"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Topic",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"my-new-topic\",\n  \"partitions\": 3,\n  \"replicationFactor\": 1,\n  \"configs\": {\n    \"retention.ms\": \"604800000\",\n    \"cleanup.policy\": \"delete\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics"]
+            }
+          }
+        },
+        {
+          "name": "Get Topic Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Topic",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"configs\": {\n    \"retention.ms\": \"86400000\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}"]
+            }
+          }
+        },
+        {
+          "name": "Recreate Topic",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Topic",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}"]
+            }
+          }
+        },
+        {
+          "name": "Clone Topic",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/clone?newTopicName=topic-clone",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "clone"],
+              "query": [
+                {"key": "newTopicName", "value": "topic-clone"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Topic Configs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/config",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "config"]
+            }
+          }
+        },
+        {
+          "name": "Change Replication Factor",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"totalReplicationFactor\": 3\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/replications",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "replications"]
+            }
+          }
+        },
+        {
+          "name": "Increase Partitions",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"totalPartitionsCount\": 6\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/partitions",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "partitions"]
+            }
+          }
+        },
+        {
+          "name": "Get Topic Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/analysis",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "analysis"]
+            }
+          }
+        },
+        {
+          "name": "Start Topic Analysis",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/analysis",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "analysis"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Topic Analysis",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/analysis",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "analysis"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Producers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/activeproducers",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "activeproducers"]
+            }
+          }
+        },
+        {
+          "name": "Get Topic Consumer Groups",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/consumer-groups",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "consumer-groups"]
+            }
+          }
+        },
+        {
+          "name": "Get Topic Connectors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/connectors",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "connectors"]
+            }
+          }
+        },
+        {
+          "name": "List Topic ACLs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/acls",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "acls"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Messages",
+      "description": "Message production and consumption",
+      "item": [
+        {
+          "name": "Get Messages (Stream)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/messages?seekType=BEGINNING&limit=100",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "messages"],
+              "query": [
+                {"key": "seekType", "value": "BEGINNING"},
+                {"key": "limit", "value": "100"}
+              ]
+            },
+            "description": "Returns messages as Server-Sent Events (SSE) stream"
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"my-key\",\n  \"content\": \"{\\\"field\\\": \\\"value\\\"}\",\n  \"headers\": {\n    \"header1\": \"value1\"\n  },\n  \"partition\": 0\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/messages",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "messages"]
+            }
+          }
+        },
+        {
+          "name": "Delete Messages (Truncate)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/messages?partitions=0&partitions=1",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "messages"],
+              "query": [
+                {"key": "partitions", "value": "0"},
+                {"key": "partitions", "value": "1"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Messages V2",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/messages/v2?limit=100",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "messages", "v2"],
+              "query": [
+                {"key": "limit", "value": "100"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Serdes (Serializers)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topic/{{topicName}}/serdes?use=DESERIALIZE",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topic", "{{topicName}}", "serdes"],
+              "query": [
+                {"key": "use", "value": "DESERIALIZE"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register Smart Filter",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filterCode\": \"return value.contains('error');\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/topics/{{topicName}}/smartfilters",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "topics", "{{topicName}}", "smartfilters"]
+            }
+          }
+        },
+        {
+          "name": "Test Smart Filter",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filterCode\": \"return value.contains('test');\",\n  \"key\": \"test-key\",\n  \"value\": \"test message content\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/smartfilters/testexecutions",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "smartfilters", "testexecutions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Consumer Groups",
+      "description": "Consumer group management",
+      "item": [
+        {
+          "name": "List Consumer Groups (Paged)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/consumer-groups/paged?page=1&perPage=25",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "consumer-groups", "paged"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "perPage", "value": "25"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Consumer Group Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/consumer-groups/{{consumerId}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "consumer-groups", "{{consumerId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Consumer Group",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/consumer-groups/{{consumerId}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "consumer-groups", "{{consumerId}}"]
+            }
+          }
+        },
+        {
+          "name": "Reset Consumer Group Offsets",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/consumer-groups/{{consumerId}}/offsets",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "consumer-groups", "{{consumerId}}", "offsets"]
+            }
+          }
+        },
+        {
+          "name": "Delete Offsets for Topic",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/consumer-groups/{{consumerId}}/topics/{{topicName}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "consumer-groups", "{{consumerId}}", "topics", "{{topicName}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Schemas (Schema Registry)",
+      "description": "Schema Registry management",
+      "item": [
+        {
+          "name": "List All Schemas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas"]
+            }
+          }
+        },
+        {
+          "name": "Create Schema",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"my-topic-value\",\n  \"schemaType\": \"AVRO\",\n  \"schema\": \"{\\\"type\\\":\\\"record\\\",\\\"name\\\":\\\"MyRecord\\\",\\\"fields\\\":[{\\\"name\\\":\\\"id\\\",\\\"type\\\":\\\"string\\\"}]}\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas"]
+            }
+          }
+        },
+        {
+          "name": "Get Schema Subject",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas/{{schemaSubject}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas", "{{schemaSubject}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Schema",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas/{{schemaSubject}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas", "{{schemaSubject}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Schema Versions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas/{{schemaSubject}}/versions",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas", "{{schemaSubject}}", "versions"]
+            }
+          }
+        },
+        {
+          "name": "Get Latest Schema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas/{{schemaSubject}}/latest",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas", "{{schemaSubject}}", "latest"]
+            }
+          }
+        },
+        {
+          "name": "Get Schema Version",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas/{{schemaSubject}}/versions/1",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas", "{{schemaSubject}}", "versions", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Global Compatibility",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas/compatibility",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas", "compatibility"]
+            }
+          }
+        },
+        {
+          "name": "Update Schema Compatibility",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"compatibility\": \"BACKWARD\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas/{{schemaSubject}}/compatibility",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas", "{{schemaSubject}}", "compatibility"]
+            }
+          }
+        },
+        {
+          "name": "Check Schema Compatibility",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schemaType\": \"AVRO\",\n  \"schema\": \"{\\\"type\\\":\\\"record\\\",\\\"name\\\":\\\"MyRecord\\\",\\\"fields\\\":[{\\\"name\\\":\\\"id\\\",\\\"type\\\":\\\"string\\\"},{\\\"name\\\":\\\"name\\\",\\\"type\\\":\\\"string\\\"}]}\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/schemas/{{schemaSubject}}/check",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "schemas", "{{schemaSubject}}", "check"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Kafka Connect",
+      "description": "Kafka Connect connectors management",
+      "item": [
+        {
+          "name": "List Connect Clusters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects"]
+            }
+          }
+        },
+        {
+          "name": "List All Connectors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connectors",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connectors"]
+            }
+          }
+        },
+        {
+          "name": "List Connectors for Connect Cluster",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors"]
+            }
+          }
+        },
+        {
+          "name": "Create Connector",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"my-file-sink\",\n  \"config\": {\n    \"connector.class\": \"org.apache.kafka.connect.file.FileStreamSinkConnector\",\n    \"tasks.max\": \"1\",\n    \"topics\": \"my-topic\",\n    \"file\": \"/tmp/output.txt\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors"]
+            }
+          }
+        },
+        {
+          "name": "Get Connector",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Connector",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}"]
+            }
+          }
+        },
+        {
+          "name": "Restart Connector",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}/action/restart",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}", "action", "restart"]
+            }
+          }
+        },
+        {
+          "name": "Pause Connector",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}/action/pause",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}", "action", "pause"]
+            }
+          }
+        },
+        {
+          "name": "Resume Connector",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}/action/resume",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}", "action", "resume"]
+            }
+          }
+        },
+        {
+          "name": "Get Connector Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}/config",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}", "config"]
+            }
+          }
+        },
+        {
+          "name": "Update Connector Config",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector.class\": \"org.apache.kafka.connect.file.FileStreamSinkConnector\",\n  \"tasks.max\": \"2\",\n  \"topics\": \"my-topic\",\n  \"file\": \"/tmp/output.txt\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}/config",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}", "config"]
+            }
+          }
+        },
+        {
+          "name": "Get Connector Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}/tasks",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}", "tasks"]
+            }
+          }
+        },
+        {
+          "name": "Restart Connector Task",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}/tasks/0/action/restart",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}", "tasks", "0", "action", "restart"]
+            }
+          }
+        },
+        {
+          "name": "Get Connector Offsets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/connectors/{{connectorName}}/offsets",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "connectors", "{{connectorName}}", "offsets"]
+            }
+          }
+        },
+        {
+          "name": "List Plugins",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/plugins",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "plugins"]
+            }
+          }
+        },
+        {
+          "name": "Validate Plugin Config",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector.class\": \"org.apache.kafka.connect.file.FileStreamSinkConnector\",\n  \"tasks.max\": \"1\",\n  \"topics\": \"my-topic\",\n  \"file\": \"/tmp/output.txt\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/connects/{{connectName}}/plugins/FileStreamSinkConnector/config/validate",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "connects", "{{connectName}}", "plugins", "FileStreamSinkConnector", "config", "validate"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. KSQL",
+      "description": "KSQL operations",
+      "item": [
+        {
+          "name": "Execute KSQL Statement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ksql\": \"SHOW STREAMS;\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/ksql/v2",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "ksql", "v2"]
+            }
+          }
+        },
+        {
+          "name": "List KSQL Tables",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/ksql/tables",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "ksql", "tables"]
+            }
+          }
+        },
+        {
+          "name": "List KSQL Streams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/ksql/streams",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "ksql", "streams"]
+            }
+          }
+        },
+        {
+          "name": "Get KSQL Response",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/ksql/response",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "ksql", "response"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. ACLs",
+      "description": "Access Control Lists management",
+      "item": [
+        {
+          "name": "List ACLs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/acls",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "acls"]
+            }
+          }
+        },
+        {
+          "name": "Export ACLs as CSV",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/acl/csv",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "acl", "csv"]
+            }
+          }
+        },
+        {
+          "name": "Create ACL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"TOPIC\",\n  \"resourceName\": \"my-topic\",\n  \"resourcePatternType\": \"LITERAL\",\n  \"principal\": \"User:alice\",\n  \"host\": \"*\",\n  \"operation\": \"READ\",\n  \"permission\": \"ALLOW\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/acl",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "acl"]
+            }
+          }
+        },
+        {
+          "name": "Delete ACL",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"TOPIC\",\n  \"resourceName\": \"my-topic\",\n  \"resourcePatternType\": \"LITERAL\",\n  \"principal\": \"User:alice\",\n  \"host\": \"*\",\n  \"operation\": \"READ\",\n  \"permission\": \"ALLOW\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/acl",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "acl"]
+            }
+          }
+        },
+        {
+          "name": "Create Consumer ACL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"principal\": \"User:consumer-app\",\n  \"host\": \"*\",\n  \"consumerGroups\": [\"my-consumer-group\"],\n  \"topics\": [\"my-topic\"]\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/acl/consumer",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "acl", "consumer"]
+            }
+          }
+        },
+        {
+          "name": "Create Producer ACL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"principal\": \"User:producer-app\",\n  \"host\": \"*\",\n  \"topics\": [\"my-topic\"]\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/acl/producer",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "acl", "producer"]
+            }
+          }
+        },
+        {
+          "name": "Create Stream App ACL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"principal\": \"User:stream-app\",\n  \"host\": \"*\",\n  \"inputTopics\": [\"input-topic\"],\n  \"outputTopics\": [\"output-topic\"],\n  \"applicationId\": \"my-streams-app\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/acl/streamapp",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "acl", "streamapp"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Client Quotas",
+      "description": "Client quota management",
+      "item": [
+        {
+          "name": "List Client Quotas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/clientquotas",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "clientquotas"]
+            }
+          }
+        },
+        {
+          "name": "Create/Update Client Quota",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entities\": [\n    {\"entityType\": \"CLIENT_ID\", \"entityName\": \"my-producer\"}\n  ],\n  \"quotas\": {\n    \"producer_byte_rate\": \"1048576\",\n    \"consumer_byte_rate\": \"2097152\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/clientquotas",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "clientquotas"]
+            }
+          }
+        },
+        {
+          "name": "Delete Client Quota",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entities\": [\n    {\"entityType\": \"CLIENT_ID\", \"entityName\": \"my-producer\"}\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/clientquotas",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "clientquotas"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Graphs & Metrics",
+      "description": "Monitoring and metrics endpoints",
+      "item": [
+        {
+          "name": "Get Available Graphs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/graphs/descriptions",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "graphs", "descriptions"]
+            }
+          }
+        },
+        {
+          "name": "Get Graph Data (Prometheus)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"kafka_server_BrokerTopicMetrics_MessagesInPerSec\",\n  \"start\": \"2024-01-01T00:00:00Z\",\n  \"end\": \"2024-01-01T01:00:00Z\",\n  \"step\": \"60\"\n}"
+            },
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/clusters/{{clusterName}}/graphs/prometheus",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "clusters", "{{clusterName}}", "graphs", "prometheus"]
+            }
+          }
+        },
+        {
+          "name": "Expose All Metrics (Prometheus)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/metrics",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["metrics"]
+            }
+          }
+        },
+        {
+          "name": "Expose Cluster Metrics (Prometheus)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/metrics/{{clusterName}}",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["metrics", "{{clusterName}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Configuration",
+      "description": "Application configuration endpoints",
+      "item": [
+        {
+          "name": "Get App Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/info",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "info"]
+            }
+          }
+        },
+        {
+          "name": "Get App Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/config",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "config"]
+            }
+          }
+        },
+        {
+          "name": "Get Validated Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/config/validated",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "config", "validated"]
+            }
+          }
+        },
+        {
+          "name": "Get Related Config Files",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/config/relatedfiles",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "config", "relatedfiles"]
+            }
+          }
+        },
+        {
+          "name": "Get Authentication Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/config/authentication",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "config", "authentication"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. Authorization",
+      "description": "User authorization endpoint",
+      "item": [
+        {
+          "name": "Get User Permissions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{kafbatBaseUrl}}/api/authorization",
+              "host": ["{{kafbatBaseUrl}}"],
+              "path": ["api", "authorization"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
