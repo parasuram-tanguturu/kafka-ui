@@ -91,29 +91,64 @@
 
 ---
 
-## Phase 3: Start Application - PENDING
+## Phase 3: Start Application - ✅ COMPLETE
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                       PHASE 3: APPLICATION STARTUP                           │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
-│   [ ] 1. Start Backend (Terminal 2)                                         │
-│       └── cd /Users/parasuram/Ruckus/Kafka/kafka-ui                        │
-│       └── ./gradlew :api:bootRun --args='--spring.profiles.active=local'   │
-│       └── Wait for "Started KafkaUiApplication"                            │
+│   [✅] 1. Start Backend                                                     │
+│        └── source "$HOME/.sdkman/bin/sdkman-init.sh"   ← REQUIRED          │
+│        └── sdk use java 25.0.2-zulu                    ← REQUIRED          │
+│        └── ./gradlew :api:bootRun --args='--spring.profiles.active=local'  │
+│        └── Started in 2.9 seconds on port 8080                             │
 │                                                                              │
-│   [ ] 2. Start Frontend (Terminal 3)                                        │
-│       └── cd frontend                                                       │
-│       └── pnpm install                                                      │
-│       └── VITE_DEV_PROXY=http://localhost:8080 pnpm dev                    │
-│       └── Wait for "ready in Xs"                                           │
+│   [✅] 2. Start Frontend                                                    │
+│        └── cd frontend                                                      │
+│        └── pnpm install                                ← First time        │
+│        └── pnpm gen:sources                            ← First time        │
+│        └── VITE_DEV_PROXY=http://localhost:8080 pnpm dev                   │
+│        └── Vite ready in 491ms on port 3000                                │
 │                                                                              │
-│   [ ] 3. Access UI                                                          │
-│       └── Open http://localhost:3000                                       │
-│       └── Verify cluster is visible                                        │
+│   [✅] 3. Access UI                                                         │
+│        └── http://localhost:3000 → HTTP 200                                │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Phase 3: First-Time Commands (Copy-Paste Ready)
+
+**Terminal 1 - Backend:**
+```bash
+cd /Users/parasuram/Ruckus/Kafka/kafka-ui
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk use java 25.0.2-zulu
+./gradlew :api:bootRun --args='--spring.profiles.active=local'
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd /Users/parasuram/Ruckus/Kafka/kafka-ui/frontend
+pnpm install
+pnpm gen:sources
+VITE_DEV_PROXY=http://localhost:8080 pnpm dev
+```
+
+### Phase 3: Subsequent Runs (Simpler)
+
+**Terminal 1 - Backend:**
+```bash
+cd /Users/parasuram/Ruckus/Kafka/kafka-ui
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk use java 25.0.2-zulu
+./gradlew :api:bootRun --args='--spring.profiles.active=local'
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd /Users/parasuram/Ruckus/Kafka/kafka-ui/frontend
+VITE_DEV_PROXY=http://localhost:8080 pnpm dev
 ```
 
 ---
@@ -127,12 +162,13 @@
 │                                                                              │
 │  Phase 1: Prerequisites      ████████████████████████████████████ 100%  ✅  │
 │  Phase 2: Infrastructure     ████████████████████████████████████ 100%  ✅  │
-│  Phase 3: Application        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0%        │
+│  Phase 3: Application        ████████████████████████████████████ 100%  ✅  │
 │                                                                              │
 │  ─────────────────────────────────────────────────────────────────────────  │
-│  Total Progress              ████████████████████████████░░░░░░  67%        │
+│  Total Progress              ████████████████████████████████████ 100%  🎉  │
 │                                                                              │
-│  Next: Start Backend and Frontend (Phase 3)                                 │
+│  LOCAL DEVELOPMENT ENVIRONMENT READY!                                       │
+│  → Open http://localhost:3000 in your browser                               │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -147,6 +183,23 @@
 | Multiple Java versions needed | ✅ RESOLVED | SDKMAN with 11, 17, 21, 25 |
 | Homebrew JDK conflicts | ✅ RESOLVED | Cleaned unused, kept tool deps |
 | Node 22 required | ✅ RESOLVED | v22.22.0 via NVM (`nvm use 22`) |
+| Gradle needs Java 25 | ✅ RESOLVED | Source SDKMAN before running Gradle |
+| Frontend missing generated-sources | ✅ RESOLVED | Run `pnpm gen:sources` first |
+
+## Important: First-Time Setup Commands
+
+```bash
+# 1. Set Java 25 (REQUIRED before Gradle)
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk use java 25.0.2-zulu
+
+# 2. Generate frontend sources (REQUIRED first time)
+cd frontend && pnpm gen:sources
+
+# 3. Then start normally
+./gradlew :api:bootRun --args='--spring.profiles.active=local'
+VITE_DEV_PROXY=http://localhost:8080 pnpm dev
+```
 
 ---
 

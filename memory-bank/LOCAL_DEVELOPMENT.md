@@ -249,13 +249,17 @@ lsof -i :2181  # Should return nothing
 
 ```bash
 cd documentation/compose
-# Start the main Kafka infrastructure services (Kafka broker, Schema Registry, Kafka Connect) in detached mode
-docker compose -f kafbat-ui.yaml up kafka0 schemaregistry0 kafka-connect0 -d
+docker compose -f kafbat-ui.yaml up kafka0 schemaregistry0 -d
 ```
 
 ### Terminal 2: Backend
 
 ```bash
+# CRITICAL: Initialize SDKMAN and set Java 25 first!
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk use java 25.0.2-zulu
+
+# Then start the backend
 ./gradlew :api:bootRun --args='--spring.profiles.active=local'
 ```
 
@@ -264,6 +268,11 @@ docker compose -f kafbat-ui.yaml up kafka0 schemaregistry0 kafka-connect0 -d
 ```bash
 cd frontend
 pnpm install
+
+# CRITICAL: First time only - generate API client sources!
+pnpm gen:sources
+
+# Start dev server with proxy
 VITE_DEV_PROXY=http://localhost:8080 pnpm dev
 ```
 
@@ -271,6 +280,27 @@ VITE_DEV_PROXY=http://localhost:8080 pnpm dev
 
 ```
 http://localhost:3000
+```
+
+---
+
+## ⚠️ Critical First-Time Setup Notes
+
+| Step | Why Required |
+|------|--------------|
+| `source "$HOME/.sdkman/bin/sdkman-init.sh"` | Shell doesn't auto-load SDKMAN |
+| `sdk use java 25.0.2-zulu` | Project requires Java 25 for compilation |
+| `pnpm gen:sources` | Generates TypeScript API client from OpenAPI spec (first time only) |
+| `VITE_DEV_PROXY=...` | Tells Vite to proxy `/api/*` calls to backend (avoids CORS) |
+
+**Common Errors Without These Steps:**
+
+```
+# Without SDKMAN/Java 25:
+error: invalid source release: 25
+
+# Without pnpm gen:sources:
+Cannot find module 'generated-sources'
 ```
 
 ---
@@ -315,9 +345,20 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 # Navigate to project root
 cd /path/to/kafka-ui
 
+# ⚠️ CRITICAL: Initialize SDKMAN and set Java 25 (required every new terminal!)
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk use java 25.0.2-zulu
+
+# Verify Java version (should show 25.x.x)
+java -version
+
 # Start Spring Boot with local profile
 ./gradlew :api:bootRun --args='--spring.profiles.active=local'
 ```
+
+**Why SDKMAN initialization is required:**
+- New terminal sessions don't have SDKMAN loaded
+- Without Java 25, Gradle fails with: `error: invalid source release: 25`
 
 **What this does:**
 
@@ -351,9 +392,17 @@ cd frontend
 # Install dependencies (first time only)
 pnpm install
 
+# ⚠️ CRITICAL: Generate API client sources (first time only!)
+pnpm gen:sources
+
 # Start development server with proxy
 VITE_DEV_PROXY=http://localhost:8080 pnpm dev
 ```
+
+**Why `pnpm gen:sources` is required:**
+- Generates TypeScript API client from OpenAPI spec
+- Without it, you'll get: `Cannot find module 'generated-sources'`
+- Only needed once (or when API spec changes)
 
 **What this does:**
 
