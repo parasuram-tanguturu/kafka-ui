@@ -20,6 +20,7 @@ import org.springframework.core.io.Resource;
 @Mapper(componentModel = "spring")
 public interface DynamicConfigMapper {
 
+  @Mapping(target = "kafka.validation", ignore = true)
   DynamicConfigOperations.PropertiesStructure fromDto(ApplicationConfigPropertiesDTO dto);
 
   @Mapping(target = "kafka.clusters[].metrics.store", ignore = true)
@@ -31,6 +32,9 @@ public interface DynamicConfigMapper {
 
   @Mapping(source = "metrics.store", target = "metrics.store", ignore = true)
   ApplicationConfigPropertiesKafkaClustersInnerDTO map(ClustersProperties.Cluster cluster);
+
+  @Mapping(target = "validation", ignore = true)
+  ClustersProperties.Cluster map(ApplicationConfigPropertiesKafkaClustersInnerDTO dto);
 
   default Permission map(RbacPermissionDTO perm) {
     Permission permission = new Permission();
