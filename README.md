@@ -157,6 +157,42 @@ All environment variables and configuration properties can be found [here](https
 
 Please refer to the [contributing guide](https://ui.docs.kafbat.io/development/contributing); we'll guide you from there.
 
+# Memory Bank
+
+This repository includes a `memory-bank/` directory containing project documentation and context for AI-assisted development workflows. The Memory Bank serves as persistent documentation that helps maintain continuity across development sessions.
+
+## Core Documentation Files
+
+| File | Purpose |
+|------|---------|
+| `projectbrief.md` | Foundation document defining core requirements and project scope |
+| `productContext.md` | Why this project exists, problems it solves, user experience goals |
+| `activeContext.md` | Current work focus, recent changes, and next steps |
+| `systemPatterns.md` | System architecture, design patterns, component relationships |
+| `techContext.md` | Technologies used, development setup, technical constraints |
+| `progress.md` | What works, what's left to build, current status, known issues |
+
+## Additional Context Files
+
+| File | Description |
+|------|-------------|
+| `LOCAL_DEVELOPMENT.md` | Development environment setup instructions |
+| `API_ENDPOINTS.md` | REST API documentation and examples |
+| `JMX_METRICS.md` | JMX metrics configuration and usage |
+| `CORS_AND_PROXY.md` | CORS and proxy configuration details |
+| `CONFIGURABLE_VALIDATION_TIMEOUTS.md` | AdminClient timeout configuration |
+| `KAFKA_QUORUM_EXPLAINED.md` | KRaft quorum controller explanation |
+| `CONFLUENT_CLOUD_DEBUG_SESSION.md` | Confluent Cloud integration debugging |
+
+## Using the Memory Bank
+
+The Memory Bank is designed for use with AI coding assistants that support persistent context. When starting a new development session:
+
+1. Read the relevant memory bank files to understand current project state
+2. Check `activeContext.md` for current work focus and recent changes
+3. Review `progress.md` for known issues and pending work
+4. Update documentation when implementing significant changes
+
 # Support
 
 As we're fully independent, team members contribute in their free time.

@@ -6,6 +6,10 @@ logging:
     #org.springframework.http.codec.json.Jackson2JsonDecoder: DEBUG
     reactor.netty.http.server.AccessLog: INFO
     org.springframework.security: DEBUG
+    # Suppress JMX SSL error (not needed for local dev with plain JMX)
+    io.kafbat.ui.service.metrics.sink.jmx.JmxSslSocketFactory: OFF
+    # Suppress macOS DNS resolver warning
+    io.netty.resolver.dns.DnsServerAddressStreamProviders: WARN
 
 #server:
 #  port: 8080 #- Port on which the app will run.
@@ -23,19 +27,43 @@ spring:
     group-filter-search-base: "ou=people,dc=planetexpress,dc=com"
 
 kafka:
+  # Global validation settings for cluster connection validation (used by UI "test connection").
+  # These are the defaults; override per-cluster if needed.
+  # validation:
+  #   retries: 3                    # Number of AdminClient retries during validation
+  #   requestTimeoutMs: 30000       # request.timeout.ms for validation AdminClient
+  #   defaultApiTimeoutMs: 30000    # default.api.timeout.ms for validation AdminClient
+
   clusters:
     - name: local
       bootstrapServers: localhost:9092
       schemaRegistry: http://localhost:8085
-      ksqldbServer: http://localhost:8088
-      kafkaConnect:
-        - name: first
-          address: http://localhost:8083
+      # Uncomment if running ksqlDB locally
+      #ksqldbServer: http://localhost:8088
+      # Uncomment if running Kafka Connect locally
+      #kafkaConnect:
+      #  - name: first
+      #    address: http://localhost:8083
       metrics:
         port: 9997
         type: JMX
 
+    # - name: confluent-cloud
+    #   bootstrapServers: xxx:xxxx
+    #   properties:
+    #     security.protocol: SASL_SSL
+    #     sasl.mechanism: PLAIN
+    #     sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='xxxx' password='xxxx';
+    #   # Per-cluster validation override for slower cloud connections:
+    #   validation:
+    #     retries: 5
+    #     requestTimeoutMs: 60000
+    #     defaultApiTimeoutMs: 60000
+
+# Dynamic config allows adding/editing clusters via UI without restarting
+# Default path /etc/kafkaui is not writable in local dev, so use home directory
 dynamic.config.enabled: true
+dynamic.config.path: ${user.home}/.kafkaui/dynamic_config.yaml
 
 oauth2:
   ldap:
@@ -80,70 +108,22 @@ auth:
         custom-params:
           type: github
 
-rbac:
-  roles:
-    - name: "memelords"
-      clusters:
-        - local
-      subjects:
-        - provider: oauth_google
-          type: domain
-          value: "kafbat.dev"
-        - provider: oauth_google
-          type: user
-          value: "name@kafbat.dev"
-
-        - provider: oauth_github
-          type: organization
-          value: "kafbat"
-        - provider: oauth_github
-          type: user
-          value: "memelord"
-
-        - provider: oauth_cognito
-          type: user
-          value: "username"
-        - provider: oauth_cognito
-          type: group
-          value: "memelords"
-
-        - provider: ldap
-          type: group
-          value: "admin_staff"
-
-        # NOT IMPLEMENTED YET
-      #        - provider: ldap_ad
-      #          type: group
-      #          value: "admin_staff"
-
-      permissions:
-        - resource: applicationconfig
-          actions: all
-
-        - resource: clusterconfig
-          actions: all
-
-        - resource: topic
-          value: ".*"
-          actions: all
-
-        - resource: consumer
-          value: ".*"
-          actions: all
-
-        - resource: schema
-          value: ".*"
-          actions: all
-
-        - resource: connect
-          value: ".*"
-          actions: all
-
-        - resource: ksql
-          actions: all
-
-        - resource: acl
-          actions: all
-
-        - resource: audit
-          actions: all
+# RBAC disabled for local development (auth.type: DISABLED means no user identity)
+# Uncomment below when using OAuth2 or LDAP authentication
+#rbac:
+#  roles:
+#    - name: "memelords"
+#      clusters:
+#        - local
+#      subjects:
+#        - provider: oauth_google
+#          type: domain
+#          value: "kafbat.dev"
+#      permissions:
+#        - resource: applicationconfig
+#          actions: all
+#        - resource: clusterconfig
+#          actions: all
+#        - resource: topic
+#          value: ".*"
+#          actions: all

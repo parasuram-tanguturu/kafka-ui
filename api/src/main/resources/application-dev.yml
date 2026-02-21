@@ -1,0 +1,26 @@
+# Development profile - minimal config with dynamic cluster management
+# Usage: ./gradlew :api:bootRun --args='--spring.profiles.active=dev'
+#
+# This profile starts with no pre-configured clusters.
+# Add clusters via the UI at http://localhost:8080 -> "Configure new cluster"
+
+auth:
+  type: DISABLED
+
+logging:
+  level:
+    root: INFO
+    io.kafbat.ui: DEBUG
+    reactor.netty.http.server.AccessLog: INFO
+
+# Kafka global settings (applies to all clusters unless overridden per-cluster)
+# kafka:
+#   validation:
+#     retries: 3                    # Number of AdminClient retries during validation
+#     requestTimeoutMs: 30000       # request.timeout.ms for validation AdminClient
+#     defaultApiTimeoutMs: 30000    # default.api.timeout.ms for validation AdminClient
+
+# Dynamic config allows adding/editing clusters via UI without restarting
+# Default path /etc/kafkaui is not writable in local dev, so use home directory
+dynamic.config.enabled: true
+dynamic.config.path: ${user.home}/.kafkaui/dynamic_config.yaml

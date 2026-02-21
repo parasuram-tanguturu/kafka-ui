@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.QuorumInfo;
+import org.apache.kafka.common.errors.ClusterAuthorizationException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class StatisticsService {
-
   private final AdminClientService adminClientService;
   private final KafkaConnectService kafkaConnectService;
   private final FeatureService featureService;
@@ -73,7 +73,7 @@ public class StatisticsService {
     return ac.describeMetadataQuorum()
         .map(Optional::of)
         .onErrorResume(t ->
-            t instanceof UnsupportedVersionException
+            t instanceof UnsupportedVersionException || t instanceof ClusterAuthorizationException
                 ? Mono.just(Optional.empty())
                 : Mono.error(t)
         );

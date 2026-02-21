@@ -51,9 +51,11 @@ public class KafkaClusterFactory {
   private final DataSize webClientMaxBuffSize;
   private final Duration responseTimeout;
   private final JmxMetricsRetriever jmxMetricsRetriever;
+  private final ClustersProperties clustersProperties;
 
   public KafkaClusterFactory(WebclientProperties webclientProperties,
-                             JmxMetricsRetriever jmxMetricsRetriever) {
+                             JmxMetricsRetriever jmxMetricsRetriever,
+                             ClustersProperties clustersProperties) {
     this.webClientMaxBuffSize = Optional.ofNullable(webclientProperties.getMaxInMemoryBufferSize())
         .map(DataSize::parse)
         .orElse(DEFAULT_WEBCLIENT_BUFFER);
@@ -61,6 +63,7 @@ public class KafkaClusterFactory {
         .map(Duration::ofMillis)
         .orElse(DEFAULT_RESPONSE_TIMEOUT);
     this.jmxMetricsRetriever = jmxMetricsRetriever;
+    this.clustersProperties = clustersProperties;
   }
 
   public KafkaCluster create(ClustersProperties properties,
@@ -114,11 +117,16 @@ public class KafkaClusterFactory {
       }
     }
 
+    ClustersProperties.ValidationConfig effectiveValidation = resolveEffectiveValidationConfig(clusterProperties);
+
     return Mono.zip(
         validateClusterConnection(
             clusterProperties.getBootstrapServers(),
             convertProperties(clusterProperties.getProperties()),
-            clusterProperties.getSsl()
+            clusterProperties.getSsl(),
+            effectiveValidation.getRetries(),
+            effectiveValidation.getRequestTimeoutMs(),
+            effectiveValidation.getDefaultApiTimeoutMs()
         ),
         schemaRegistryConfigured(clusterProperties)
             ? validateSchemaRegistry(() -> schemaRegistryClient(clusterProperties)).map(Optional::of)
@@ -265,5 +273,31 @@ public class KafkaClusterFactory {
 
   private List<String> parseUrlList(String url) {
     return Stream.of(url.split(",")).map(String::trim).filter(s -> !s.isBlank()).toList();
+  }
+
+  private ClustersProperties.ValidationConfig resolveEffectiveValidationConfig(
+      ClustersProperties.Cluster clusterProperties) {
+    ClustersProperties.ValidationConfig globalDefaults = clustersProperties.getValidation();
+    ClustersProperties.ValidationConfig clusterOverride = clusterProperties.getValidation();
+
+    int retries = Optional.ofNullable(clusterOverride)
+        .map(ClustersProperties.ValidationConfig::getRetries)
+        .orElseGet(() -> Optional.ofNullable(globalDefaults)
+            .map(ClustersProperties.ValidationConfig::getRetries)
+            .orElse(3));
+
+    int requestTimeoutMs = Optional.ofNullable(clusterOverride)
+        .map(ClustersProperties.ValidationConfig::getRequestTimeoutMs)
+        .orElseGet(() -> Optional.ofNullable(globalDefaults)
+            .map(ClustersProperties.ValidationConfig::getRequestTimeoutMs)
+            .orElse(30000));
+
+    int defaultApiTimeoutMs = Optional.ofNullable(clusterOverride)
+        .map(ClustersProperties.ValidationConfig::getDefaultApiTimeoutMs)
+        .orElseGet(() -> Optional.ofNullable(globalDefaults)
+            .map(ClustersProperties.ValidationConfig::getDefaultApiTimeoutMs)
+            .orElse(30000));
+
+    return new ClustersProperties.ValidationConfig(retries, requestTimeoutMs, defaultApiTimeoutMs);
   }
 }
