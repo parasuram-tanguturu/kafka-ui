@@ -83,6 +83,11 @@ dependencies {
     runtimeOnly(libs.micrometer.registry.prometheus) {
         exclude group: 'com.google.protobuf', module: 'protobuf-java' because("Micrometer uses protobuf-java 4.x, which is incompatible with protobuf-java 3.x used by various dependencies of this project. See https://github.com/prometheus/client_java/issues/1431")
     }
+    runtimeOnly("io.netty:netty-resolver-dns-native-macos") {
+        artifact {
+            classifier = System.getProperty("os.arch") == "aarch64" ? "osx-aarch_64" : "osx-x86_64"
+        }
+    }
 
     // CVE Fixes
     implementation libs.apache.commons.compress

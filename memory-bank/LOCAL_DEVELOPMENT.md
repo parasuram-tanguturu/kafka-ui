@@ -4,6 +4,38 @@
 
 ---
 
+## Table of Contents
+
+- [Architecture Overview](#architecture-overview)
+- [Prerequisites](#prerequisites)
+  - [Required Versions](#required-versions)
+  - [Installing Java 25 (via SDKMAN)](#installing-java-25-via-sdkman)
+  - [Installing Node.js 22 (via NVM)](#installing-nodejs-22-via-nvm)
+  - [Installing pnpm](#installing-pnpm)
+- [Caution: Port Conflicts](#️-caution-port-conflicts)
+  - [Understanding Docker Port Mapping](#understanding-docker-port-mapping)
+  - [Common Port Conflicts](#common-port-conflicts)
+  - [Port 3000 Conflict (Frontend)](#port-3000-conflict-frontend)
+  - [Port 8080 Conflict (Backend)](#port-8080-conflict-backend)
+  - [Homebrew Kafka/Zookeeper Conflict](#homebrew-kafkazookeeper-conflict)
+- [Quick Start (3 Terminals)](#quick-start-3-terminals)
+- [Critical First-Time Setup Notes](#️-critical-first-time-setup-notes)
+- [Step-by-Step Guide](#step-by-step-guide)
+  - [Step 1: Start Kafka Infrastructure](#step-1-start-kafka-infrastructure)
+  - [Step 2: Start Backend](#step-2-start-backend)
+  - [Step 3: Start Frontend](#step-3-start-frontend)
+- [Stopping Everything](#stopping-everything)
+- [Port Reference](#port-reference)
+- [Configuration Files](#configuration-files)
+- [Troubleshooting](#troubleshooting)
+- [IDE Setup (IntelliJ IDEA)](#ide-setup-intellij-idea)
+- [Data Flow Diagram](#data-flow-diagram)
+- [Useful Commands](#useful-commands)
+- [Alternative: Full Docker Stack](#alternative-full-docker-stack-no-code-changes)
+- [Related Documentation](#related-documentation)
+
+---
+
 ## Architecture Overview
 
 ```

@@ -63,15 +63,17 @@ public final class KafkaServicesValidation {
 
   public static Mono<ApplicationPropertyValidationDTO> validateClusterConnection(String bootstrapServers,
                                                                                  Properties clusterProps,
-                                                                                 @Nullable TruststoreConfig ssl) {
+                                                                                 @Nullable TruststoreConfig ssl,
+                                                                                 int retries,
+                                                                                 int requestTimeoutMs,
+                                                                                 int defaultApiTimeoutMs) {
     Properties properties = new Properties();
     KafkaClientSslPropertiesUtil.addKafkaSslProperties(ssl, properties);
     properties.putAll(clusterProps);
     properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    // editing properties to make validation faster
-    properties.put(AdminClientConfig.RETRIES_CONFIG, 1);
-    properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5_000);
-    properties.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 5_000);
+    properties.put(AdminClientConfig.RETRIES_CONFIG, retries);
+    properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeoutMs);
+    properties.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, defaultApiTimeoutMs);
     properties.put(AdminClientConfig.CLIENT_ID_CONFIG, "kui-admin-client-validation-" + System.currentTimeMillis());
     AdminClient adminClient;
     try {

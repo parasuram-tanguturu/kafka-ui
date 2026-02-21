@@ -430,7 +430,11 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<ClusterDescription> describeCluster() {
-    return describeClusterImpl(client, getClusterFeatures());
+    return describeClusterImpl(client, getClusterFeatures())
+        .onErrorResume(ClusterAuthorizationException.class, th -> {
+          log.warn("describeCluster with includeAuthorizedOperations failed, retrying without it", th);
+          return describeClusterImpl(client, Set.of());
+        });
   }
 
   private static Mono<ClusterDescription> describeClusterImpl(AdminClient client,

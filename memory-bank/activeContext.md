@@ -68,6 +68,11 @@
 
 | Date | Change | Details |
 |------|--------|---------|
+| 2026-02-21 | YAML-configurable validation timeouts | Made AdminClient timeouts configurable via YAML |
+| 2026-02-21 | Created timeout config docs | `CONFIGURABLE_VALIDATION_TIMEOUTS.md` |
+| 2026-02-21 | Confluent Cloud fixes | Fixed quorum auth + validation timeout issues |
+| 2026-02-21 | Created debug session docs | `CONFLUENT_CLOUD_DEBUG_SESSION.md` |
+| 2026-02-21 | Created Quorum explainer | `KAFKA_QUORUM_EXPLAINED.md` |
 | 2026-02-20 | Node.js 22 configured | v22.22.0 via NVM, use `nvm use 22` |
 | 2026-02-20 | SDKMAN Java setup complete | Installed Java 11, 17, 21, 25 via SDKMAN |
 | 2026-02-20 | Set Java 21 as default | System default for new terminals |

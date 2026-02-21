@@ -45,6 +45,8 @@ public class ClustersProperties {
 
   AdminClient adminClient = new AdminClient();
 
+  ValidationConfig validation = new ValidationConfig();
+
   Csv csv = new Csv();
 
   Boolean messageRelativeTimestamp;
@@ -55,6 +57,15 @@ public class ClustersProperties {
     char quoteCharacter = '"';
     String quoteStrategy = "required";
     char fieldSeparator = ',';
+  }
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class ValidationConfig {
+    Integer retries = 3;
+    Integer requestTimeoutMs = 30000;
+    Integer defaultApiTimeoutMs = 30000;
   }
 
   @Data
@@ -102,6 +113,8 @@ public class ClustersProperties {
     List<@Valid Masking> masking;
 
     AuditProperties audit;
+
+    ValidationConfig validation;
   }
 
   @Data

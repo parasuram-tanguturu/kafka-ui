@@ -185,6 +185,43 @@ VITE_DEV_PROXY=http://localhost:8080 pnpm dev
 | Node 22 required | ✅ RESOLVED | v22.22.0 via NVM (`nvm use 22`) |
 | Gradle needs Java 25 | ✅ RESOLVED | Source SDKMAN before running Gradle |
 | Frontend missing generated-sources | ✅ RESOLVED | Run `pnpm gen:sources` first |
+| Confluent Cloud validation timeouts | ✅ RESOLVED | Made timeouts YAML-configurable (see below) |
+
+---
+
+## Feature: Configurable Validation Timeouts
+
+### Problem
+Managed Kafka services (Confluent Cloud, AWS MSK) failed validation with `TimeoutException` due to hardcoded aggressive timeout values (5s, 1 retry).
+
+### Solution
+Made validation timeouts configurable via YAML with global defaults and per-cluster overrides.
+
+### Configuration
+```yaml
+kafka:
+  # Global defaults
+  validation:
+    retries: 3
+    requestTimeoutMs: 30000
+    defaultApiTimeoutMs: 30000
+  
+  clusters:
+    - name: confluent-cloud
+      # Per-cluster override for slower connections
+      validation:
+        retries: 5
+        requestTimeoutMs: 60000
+        defaultApiTimeoutMs: 60000
+```
+
+### Files Changed
+- `ClustersProperties.java` - Added `ValidationConfig` class
+- `KafkaClusterFactory.java` - Added `resolveEffectiveValidationConfig()` 
+- `KafkaServicesValidation.java` - Parameterized timeout values
+
+### Documentation
+See `memory-bank/CONFIGURABLE_VALIDATION_TIMEOUTS.md` for full details.
 
 ## Important: First-Time Setup Commands
 
