@@ -1,5 +1,35 @@
 # Kafka UI MCP Server Documentation
 
+## Table of Contents
+
+- [What is MCP?](#what-is-mcp)
+- [Architecture Overview](#architecture-overview)
+- [How to Enable MCP](#how-to-enable-mcp)
+  - [Configuration Property](#configuration-property)
+  - [Environment Variable](#environment-variable)
+  - [Docker Compose](#docker-compose)
+  - [Running Locally (Gradle)](#running-locally-gradle)
+- [Code Evidence](#code-evidence)
+  - [MCP Configuration](#1-mcp-configuration-mcpconfigjava)
+  - [McpTool Marker Interface](#2-mcptool-marker-interface)
+  - [Tool Specification Generator](#3-tool-specification-generator)
+  - [Controller Implementation](#4-controller-implementation-example)
+- [Available MCP Tools](#available-mcp-tools)
+- [Transport Layer](#transport-layer)
+- [Dependencies](#dependencies)
+- [Usage Examples](#usage-examples)
+- [Configuring Cursor IDE to Use Kafka UI MCP](#configuring-cursor-ide-to-use-kafka-ui-mcp)
+  - [Prerequisites](#prerequisites)
+  - [Step 1: Open Cursor Settings](#step-1-open-cursor-settings)
+  - [Step 2: Add MCP Server Configuration](#step-2-add-mcp-server-configuration)
+  - [Configuration for Different Environments](#configuration-for-different-environments)
+  - [Troubleshooting](#troubleshooting)
+- [Server Capabilities](#server-capabilities)
+- [File References](#file-references)
+- [External Documentation](#external-documentation)
+
+---
+
 ## What is MCP?
 
 **Model Context Protocol (MCP)** is an open protocol that enables AI assistants and LLM-based tools to interact with external systems. Kafka UI implements an MCP Server, allowing AI agents to manage Kafka clusters programmatically.
@@ -90,6 +120,21 @@ services:
     image: ghcr.io/kafbat/kafka-ui:latest
     environment:
       MCP_ENABLED: "true"
+```
+
+### Running Locally (Gradle)
+
+**Prerequisites:** Java 25 via SDKMAN
+
+```bash
+# Set Java version (required)
+sdk use java 25.0.2-zulu
+
+# Run with local profile (pre-configured Kafka cluster)
+./gradlew :api:bootRun --args='--spring.profiles.active=local'
+
+# Or run with dev profile (dynamic cluster management via UI)
+./gradlew :api:bootRun --args='--spring.profiles.active=dev'
 ```
 
 ---
@@ -373,6 +418,139 @@ AI Agent: Creating the topic now.
           
           ✓ Topic 'events' created successfully.
 ```
+
+---
+
+## Configuring Cursor IDE to Use Kafka UI MCP
+
+### Prerequisites
+
+1. Kafka UI must be running with MCP enabled (`mcp.enabled=true`)
+2. The server must be accessible (default: `http://localhost:8080`)
+
+### Step 1: Open Cursor Settings
+
+```
+Cursor → Settings → Cursor Settings → MCP
+```
+
+Or use keyboard shortcut: `Cmd+Shift+P` → "Cursor Settings" → Navigate to MCP section
+
+### Step 2: Add MCP Server Configuration
+
+Click "Add new MCP server" and configure:
+
+```json
+{
+  "mcpServers": {
+    "kafka-ui": {
+      "url": "http://localhost:8080/mcp/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+### Alternative: Edit `~/.cursor/mcp.json` Directly
+
+```json
+{
+  "mcpServers": {
+    "kafka-ui": {
+      "url": "http://localhost:8080/mcp/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+### Step 3: Verify Connection
+
+Once configured, Cursor will:
+1. Connect to the SSE endpoint at `/mcp/sse`
+2. Discover available tools automatically
+3. Show Kafka UI tools in the MCP tools panel
+
+### Configuration for Different Environments
+
+```json
+{
+  "mcpServers": {
+    "kafka-ui-local": {
+      "url": "http://localhost:8080/mcp/sse",
+      "transport": "sse"
+    },
+    "kafka-ui-dev": {
+      "url": "http://dev-kafka-ui.internal:8080/mcp/sse",
+      "transport": "sse"
+    },
+    "kafka-ui-prod": {
+      "url": "https://kafka-ui.company.com/mcp/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+### Visual: Cursor MCP Setup Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     Cursor MCP Configuration                            │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  1. Set Java version and start Kafka UI with MCP enabled                │
+│     ┌─────────────────────────────────────────────────────────────┐     │
+│     │ $ sdk use java 25.0.2-zulu                                   │    │
+│     │ $ ./gradlew :api:bootRun --args='--spring.profiles.active=dev'│ │
+│     │ ...                                                          │    │
+│     │ MCP Server started at /mcp/sse                               │    │
+│     └─────────────────────────────────────────────────────────────┘     │
+│                              │                                          │
+│                              ▼                                          │
+│  2. Configure Cursor                                                    │
+│     ┌─────────────────────────────────────────────────────────────┐     │
+│     │ Cursor Settings → MCP → Add Server                          │     │
+│     │                                                              │    │
+│     │   Name: kafka-ui                                             │    │
+│     │   URL:  http://localhost:8080/mcp/sse                        │    │
+│     │   Transport: sse                                             │    │
+│     └─────────────────────────────────────────────────────────────┘     │
+│                              │                                          │
+│                              ▼                                          │
+│  3. Use MCP Tools                                                       │
+│     ┌─────────────────────────────────────────────────────────────┐     │
+│     │ User: "List all topics in local cluster"                    │     │
+│     │                                                              │    │
+│     │ Cursor: [Calls kafka-ui.getTopics]                          │     │
+│     │         Found 5 topics: orders, payments, users...          │     │
+│     └─────────────────────────────────────────────────────────────┘     │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "Connection refused" | Ensure Kafka UI is running and MCP is enabled |
+| "No tools discovered" | Check that `mcp.enabled=true` in application config |
+| "SSE timeout" | Verify firewall/proxy allows SSE connections |
+| Tools not appearing | Restart Cursor after adding MCP config |
+
+### Using MCP Tools in Cursor
+
+Once connected, you can ask Cursor to perform Kafka operations:
+
+```
+"List all topics in the local cluster"
+"Create a topic called 'events' with 6 partitions"
+"Show consumer groups for the production cluster"
+"What's the lag for consumer group 'my-app'?"
+"Delete topic 'test-topic' from local cluster"
+```
+
+Cursor will automatically invoke the appropriate MCP tools.
 
 ---
 
