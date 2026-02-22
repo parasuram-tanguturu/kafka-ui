@@ -4,6 +4,10 @@
 # This profile starts with no pre-configured clusters.
 # Add clusters via the UI at http://localhost:8080 -> "Configure new cluster"
 
+# MCP Server - enables AI agents to interact with Kafka via Model Context Protocol
+mcp:
+  enabled: true
+
 auth:
   type: DISABLED
 
